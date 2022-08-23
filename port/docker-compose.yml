@@ -1,0 +1,43 @@
+version: '3'
+
+services:
+  db:
+    image: mysql:8
+    container_name: portdb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${ROOT_PASS}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+      TZ: ${TZ}
+    expose:
+        - 3306
+    ports:
+        - ${DB_PORT}:3306
+    volumes:
+        - db-store:/var/lib/mysql
+        - ./conf/my.cnf:/etc/mysql/conf.d/my.cnf
+
+  node:
+    image: node:lts 
+    container_name: portexpress 
+    tty: true
+    expose:
+      - 3000
+    environment:
+      - PORT=3000 
+    volumes:
+      - ./backend:/usr/src/app
+      - express-data:/usr/src/app/node_modules 
+    ports:
+      - 5555:5555
+      - 9229:9229
+      - 3000:3000 
+    working_dir: /usr/src/app/
+
+volumes:
+  db-store:
+    name: portdb
+  express-data:
+    name: portexpress
