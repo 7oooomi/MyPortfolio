@@ -4,6 +4,7 @@ import { Request, Response, NextFunction } from "express";
 import path from "path";
 import cookieParser from "cookie-parser";
 import logger from "morgan";
+import cors from "cors";
 
 import { router as indexRouter } from "./routes/index";
 import { router as worksRouter } from "./routes/works";
@@ -14,6 +15,8 @@ const app = express();
 
 app.set("views", path.join(__dirname, "views"));
 app.set("view engine", "pug");
+
+app.use(cors());
 
 app.use(logger("dev"));
 app.use(express.json());
