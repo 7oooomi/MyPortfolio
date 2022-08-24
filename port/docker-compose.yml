@@ -34,10 +34,28 @@ services:
       - 5555:5555
       - 9229:9229
       - 3000:3000 
-    working_dir: /usr/src/app/
+    working_dir: /usr/src/app/app
+
+  next:
+    image: node:lts 
+    container_name: portnext
+    tty: true
+    environment:
+      - NODE_ENV=DEVELOPMENT
+      - WATCHPACK_POLLING=true
+      - PORT=3008 # コンテナ内でのポート番号
+    volumes:
+      - ./:/usr/src/app
+      - next-data:/usr/src/node_modules # volumeのエントリポイント => 高速化
+    ports:
+      - 3008:3008 # 公開ポート番号:environmentで指定したポート番号
+    working_dir: /usr/src/app
+    command: sh -c "cd front && npm run dev"
 
 volumes:
   db-store:
     name: portdb
   express-data:
     name: portexpress
+  next-data:
+    name: portnext
