@@ -1,0 +1,47 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Profile {
+  id       Int     @id @default(autoincrement())
+  name     String
+  career   String  @db.VarChar(200)
+  foreword String  @db.VarChar(200)
+  email    String
+  twitter  String
+  works    Work[]
+  Skill    Skill[]
+}
+
+model Work {
+  id        Int     @id @default(autoincrement())
+  title     String
+  content   String  @db.VarChar(200)
+  profile   Profile @relation(fields: [profileId], references: [id])
+  profileId Int
+  image     String?
+  favorite  Int
+}
+
+model Skill {
+  id        Int     @id @default(autoincrement())
+  name      String
+  profile   Profile @relation(fields: [profileId], references: [id])
+  profileId Int
+  level     Level   @relation(fields: [levelId], references: [id])
+  levelId   Int
+}
+
+model Level {
+  id     Int     @id @default(autoincrement())
+  name   String
+  skills Skill[]
+}
