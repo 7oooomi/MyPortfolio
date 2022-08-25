@@ -24,7 +24,7 @@ export default function Header() {
           <Link href="/contact">contact</Link>
         </div>
         <div>
-          <Link href="/my">my</Link>
+          <Link href="/login">login</Link>
         </div>
       </main>
     </div>
