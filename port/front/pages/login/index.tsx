@@ -54,6 +54,9 @@ export default function Signin(props: profile) {
               <Link href="/login/myform">profile</Link>
             </li>
             <li>
+              <Link href="/login/new">new</Link>
+            </li>
+            <li>
               works
               {props.profile[0].works.map((item, i) => {
                 return (
