@@ -30,13 +30,11 @@ export default function Works(props: works) {
           <>
             {props.works.map((item, i) => {
               return (
-                <Card className={styles.card}>
+                <Card className={styles.card} key={i}>
                   <Card.Img variant="top" />
                   <Card.Body>
-                    <div key={i}>
-                      <Card.Title>{item.title}</Card.Title>
-                      <Card.Text>{item.content}</Card.Text>
-                    </div>
+                    <Card.Title>{item.title}</Card.Title>
+                    <Card.Text>{item.content}</Card.Text>
                   </Card.Body>
                 </Card>
               );

@@ -14,7 +14,7 @@ router.get("/", async (req: Request, res: Response) => {
 });
 
 router.post("/", async (req: Request, res: Response) => {
-  const { title, content, favorite, image } = req.body;
+  const { title, content, favorite, image, profileId } = req.body;
   try {
     logger.info("work_post start");
     const work = await prisma.work.create({
@@ -23,7 +23,7 @@ router.post("/", async (req: Request, res: Response) => {
         content,
         favorite: Number(favorite),
         image,
-        profileId: 1,
+        profileId,
       },
     });
     res.status(201).json({ work });
