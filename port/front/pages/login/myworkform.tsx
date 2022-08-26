@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import type { ChangeEvent } from "react";
 import axios from "axios";
 import Link from "next/link";
+import { Form } from "react-bootstrap";
 
 export interface works {
   works: Work[];
@@ -50,26 +51,33 @@ export default function WorkForm(props: any) {
   return (
     <>
       {console.log(props)}
-      <form>
-        <label>アプリ名：</label>
-        <input
-          value={title}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setTitle(e.target.value)
-          }
-        />
+      <Form>
+        <Form.Group>
+          <Form.Label>アプリ名：</Form.Label>
+          <Form.Control
+            type="text"
+            value={title}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setTitle(e.target.value)
+            }
+          />
+        </Form.Group>
 
-        <label>説明:</label>
-        <textarea
-          value={content}
-          onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
-            setContent(e.target.value)
-          }
-        />
+        <Form.Group>
+          <Form.Label>説明:</Form.Label>
+          <Form.Control
+            as="textarea"
+            rows={5}
+            value={content}
+            onChange={(e: ChangeEvent<HTMLTextAreaElement>) =>
+              setContent(e.target.value)
+            }
+          />
+        </Form.Group>
         <button type="submit" onClick={handleClick}>
           upData
         </button>
-      </form>
+      </Form>
       <Link href="/login">戻る</Link>
     </>
   );

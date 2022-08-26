@@ -4,6 +4,7 @@ import type { GetServerSideProps } from "next";
 import type { ChangeEvent } from "react";
 import { useRouter } from "next/router";
 import Link from "next/link";
+import { Form } from "react-bootstrap";
 
 export interface skills {
   skills: Skill[];
@@ -47,26 +48,31 @@ export default function upSkill(props: skills) {
 
   return (
     <>
-      <form>
-        <label>name:</label>
-        <input
-          value={name}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setName(e.target.value)
-          }
-        />
-
-        <label>level:{props.skills[id].level.name}</label>
-        <input
-          value={levelId}
-          onChange={(e: ChangeEvent<HTMLInputElement>) =>
-            setLevelId(e.target.value)
-          }
-        />
+      <Form>
+        <Form.Group>
+          <Form.Label>name:</Form.Label>
+          <Form.Control
+            type="text"
+            value={name}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setName(e.target.value)
+            }
+          />
+        </Form.Group>
+        <Form.Group>
+          <Form.Label>level:{props.skills[id].level.name}</Form.Label>
+          <Form.Control
+            type="text"
+            value={levelId}
+            onChange={(e: ChangeEvent<HTMLInputElement>) =>
+              setLevelId(e.target.value)
+            }
+          />
+        </Form.Group>
         <button type="submit" onClick={handleClick}>
           upData
         </button>
-      </form>
+      </Form>
       <Link href="/login">戻る</Link>
     </>
   );

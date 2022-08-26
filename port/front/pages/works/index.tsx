@@ -3,6 +3,8 @@ import Header from "../component/Header";
 import { GetStaticProps } from "next";
 import { useEffect } from "react";
 import axios from "axios";
+import { Card } from "react-bootstrap";
+import styles from "../../styles/Home.module.css";
 
 export interface works {
   works: Work[];
@@ -24,17 +26,23 @@ export default function Works(props: works) {
       <Header />
       <main>
         <h1>works</h1>
-        <div></div>
-        <>
-          {props.works.map((item, i) => {
-            return (
-              <div key={i}>
-                <h3>{item.title}</h3>
-                <p>{item.content}</p>
-              </div>
-            );
-          })}
-        </>
+        <div>
+          <>
+            {props.works.map((item, i) => {
+              return (
+                <Card className={styles.card}>
+                  <Card.Img variant="top" />
+                  <Card.Body>
+                    <div key={i}>
+                      <Card.Title>{item.title}</Card.Title>
+                      <Card.Text>{item.content}</Card.Text>
+                    </div>
+                  </Card.Body>
+                </Card>
+              );
+            })}
+          </>
+        </div>
       </main>
       <Footer />
     </>

@@ -1,5 +1,7 @@
 import Head from "next/head";
 import Link from "next/link";
+import Nav from "react-bootstrap/Nav";
+import styles from "../../styles/Home.module.css";
 
 export default function Header() {
   return (
@@ -11,21 +13,33 @@ export default function Header() {
       </Head>
 
       <main>
-        <h1>
-          <Link href="/">Iam</Link>
-        </h1>
-        <div>
-          <Link href="/about">about</Link>
-        </div>
-        <div>
-          <Link href="/works">works</Link>
-        </div>
-        <div>
-          <Link href="/contact">contact</Link>
-        </div>
-        <div>
-          <Link href="/login">login</Link>
-        </div>
+        {" "}
+        <Nav className={styles.header}>
+          <h1>
+            <Link href="/">portfolio</Link>
+          </h1>
+
+          <Nav.Item>
+            <Nav.Link style={{ color: "black" }} href="/about">
+              about
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link style={{ color: "black" }} href="/works">
+              works
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link style={{ color: "black" }} href="/contact">
+              contact
+            </Nav.Link>
+          </Nav.Item>
+          <Nav.Item>
+            <Nav.Link style={{ color: "black" }} href="/login">
+              login
+            </Nav.Link>
+          </Nav.Item>
+        </Nav>
       </main>
     </div>
   );
