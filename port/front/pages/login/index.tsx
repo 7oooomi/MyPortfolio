@@ -1,9 +1,12 @@
-import { signInWithPopup } from "@firebase/auth";
-import { auth, provider } from "../../firebase/init";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { auth } from "../../firebase/init";
 import { useAuthState } from "react-firebase-hooks/auth";
 import Link from "next/link";
 import axios from "axios";
 import type { GetServerSideProps } from "next";
+import styles from "../../styles/Home.module.css";
+import Button from "react-bootstrap/Button";
+import { useRef, createContext, useState, useContext } from "react";
 
 export interface profile {
   profile: Profile[];
@@ -38,6 +41,7 @@ export interface Work {
 
 export default function Signin(props: profile) {
   const [user] = useAuthState(auth);
+
   return (
     <>
       {user ? (
@@ -65,6 +69,9 @@ export default function Signin(props: profile) {
                   </ul>
                 );
               })}
+              <ul>
+                <Link href="/login/upload">画像upload</Link>
+              </ul>
             </li>
             <li>
               skills
@@ -96,29 +103,55 @@ export default function Signin(props: profile) {
 }
 
 function SignInButton() {
-  const signInWithGoogle = () => {
-    signInWithPopup(auth, provider);
+  const emailRef = useRef(null);
+  const emailPassword = useRef(null);
+  const handleSubmit = (event: any) => {
+    event.preventDefault();
+    console.log(emailRef.current.value, emailPassword.current.value);
+    signInWithEmailAndPassword(
+      auth,
+      emailRef.current.value,
+      emailPassword.current.value
+    )
+      .then((d) => {
+        console.log("success > d", d);
+      })
+      .catch((e) => {
+        alert(e.message);
+      });
   };
 
   return (
     <>
-      <button onClick={signInWithGoogle}>
-        <p>サインイン</p>
-      </button>
-      <button>
-        <Link href="/">キャンセル</Link>
-      </button>
+      <div className={styles.login}>
+        <form className={styles.login}>
+          <label>email:</label>
+          <input name="email" type="email" ref={emailRef} />
+          <label>password:</label>
+          <input name="password" type="password" ref={emailPassword} />
+          <Button
+            variant="outline-secondary"
+            onClick={handleSubmit}
+            className={styles.login}
+          >
+            サインイン
+          </Button>
+        </form>
+        <Button variant="outline-secondary" className={styles.login}>
+          <Link href="/">キャンセル</Link>
+        </Button>
+      </div>
     </>
   );
 }
 
 function SignOutButton() {
   return (
-    <button onClick={() => auth.signOut()}>
+    <Button variant="outline-secondary" onClick={() => auth.signOut()}>
       <p>
         <Link href="/">サインアウト</Link>
       </p>
-    </button>
+    </Button>
   );
 }
 
