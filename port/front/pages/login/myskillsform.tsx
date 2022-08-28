@@ -1,14 +1,10 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { GetServerSideProps } from "next";
 import type { ChangeEvent } from "react";
-import { useRouter } from "next/router";
 import Link from "next/link";
-import { Form } from "react-bootstrap";
-
-export interface skills {
-  skills: Skill[];
-}
+import { Form, Button } from "react-bootstrap";
+import { useRouter } from "next/router";
 
 export interface Skill {
   id: number;
@@ -23,31 +19,27 @@ export interface Level {
   name: string;
 }
 
-export default function upSkill(props: skills) {
-  const router = useRouter();
-  let id = Number(router.query.id) - 1;
-  console.log(id);
-
-  const [name, setName] = useState(`${props.skills[id].name}`);
-  const [levelId, setLevelId] = useState(`${props.skills[id].levelId}`);
+export default function upSkill(props: Skill) {
+  const [name, setName] = useState(`${props.name}`);
+  const [levelId, setLevelId] = useState(`${props.levelId}`);
 
   const handleClick = async (e: any) => {
-    e.preventDefault();
-
     const data = {
       name,
       levelId,
     };
-    id = id + 1;
 
-    await axios.put(`http://localhost:3000/skills/${id}`, data).then((res) => {
-      console.log("ok");
-      console.log(res);
-    });
+    await axios
+      .put(`http://localhost:3000/skills/${props.id}`, data)
+      .then((res) => {
+        console.log("ok");
+        console.log(res);
+      });
   };
 
   return (
     <>
+      {console.log(props)}
       <Form>
         <Form.Group>
           <Form.Label>name:</Form.Label>
@@ -60,7 +52,7 @@ export default function upSkill(props: skills) {
           />
         </Form.Group>
         <Form.Group>
-          <Form.Label>level:{props.skills[id].level.name}</Form.Label>
+          <Form.Label>level:{props.level.name}</Form.Label>
           <Form.Control
             type="text"
             value={levelId}
@@ -69,18 +61,21 @@ export default function upSkill(props: skills) {
             }
           />
         </Form.Group>
-        <button type="submit" onClick={handleClick}>
-          upData
-        </button>
+        <Button variant="outline-secondary" type="submit" onClick={handleClick}>
+          <Link href="/login">upData</Link>
+        </Button>
       </Form>
-      <Link href="/login">戻る</Link>
+      <Button variant="outline-secondary">
+        <Link href="/login">戻る</Link>
+      </Button>
     </>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const res = await axios.get("http://node:3000/skills");
-  const data = res.data;
+  const id = ctx.query.id;
+  const res = await axios.get(`http://node:3000/skills/${id}`);
+  const data = res.data.skill[0];
   return {
     props: data,
   };

@@ -1,10 +1,12 @@
-import Footer from "../component/Footer";
-import Header from "../component/Header";
+import Footer from "./component/Footer";
+import Header from "./component/Header";
 import { GetStaticProps } from "next";
-import { useEffect } from "react";
 import axios from "axios";
 import { Card } from "react-bootstrap";
-import styles from "../../styles/Home.module.css";
+import styles from "../styles/Home.module.css";
+import { getDownloadURL, ref } from "firebase/storage";
+import { storage } from "../firebase/init";
+import { useState } from "react";
 
 export interface works {
   works: Work[];
@@ -15,26 +17,36 @@ export interface Work {
   title: string;
   content: string;
   profileId: number;
-  image: null;
+  image: string;
   favorite: number;
 }
 
 export default function Works(props: works) {
   return (
     <>
-      {console.log(props.works)}
+      {console.log(props)}
       <Header />
       <main>
         <h1>works</h1>
         <div>
           <>
             {props.works.map((item, i) => {
+              const [image, setImage] = useState("");
+              const gsRef = ref(
+                storage,
+                `gs://port-fd24b.appspot.com/${item.image}`
+              );
+              getDownloadURL(gsRef).then((url) => {
+                setImage(url);
+              });
+
               return (
                 <Card className={styles.card} key={i}>
                   <Card.Img variant="top" />
                   <Card.Body>
                     <Card.Title>{item.title}</Card.Title>
                     <Card.Text>{item.content}</Card.Text>
+                    <Card.Img src={image} alt=""></Card.Img>
                   </Card.Body>
                 </Card>
               );

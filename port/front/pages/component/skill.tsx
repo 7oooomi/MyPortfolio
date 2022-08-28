@@ -38,9 +38,9 @@ export default function Skill(props: skills) {
 }
 
 export const getStaticProps: GetStaticProps = async (ctx) => {
-  const res = await axios.get("http://node:3000/skills");
-  const data = res.data;
+  const res = await fetch(`http://node:3001/skills`);
+  const data = await res.json();
   return {
-    props: data,
+    props: { data },
   };
 };

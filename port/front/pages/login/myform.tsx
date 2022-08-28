@@ -1,9 +1,10 @@
 import axios from "axios";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import type { GetServerSideProps } from "next";
 import type { ChangeEvent } from "react";
 import Link from "next/link";
-import Form from "react-bootstrap/Form";
+import { Form, Button } from "react-bootstrap";
+import { postImage } from "../component/up";
 
 export interface Profile {
   id: number;
@@ -12,6 +13,7 @@ export interface Profile {
   foreword: string;
   email: string;
   twitter: string;
+  image: string;
 }
 
 export default function UserForm(props: Profile) {
@@ -20,9 +22,21 @@ export default function UserForm(props: Profile) {
   const [foreword, setForeword] = useState(props.foreword);
   const [email, setEmail] = useState(props.email);
   const [twitter, setTwitter] = useState(props.twitter);
+  const [image, setImage] = useState(null);
+  const [url, setURL] = useState("");
 
-  const handleClick = async (e: any) => {
-    e.preventDefault();
+  const uploadToClient = (e: any) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+
+      setImage(file);
+      setURL(URL.createObjectURL(file));
+    }
+  };
+
+  const handleClick = () => {
+    const result = postImage(image);
+    console.log(result);
 
     const data = {
       name,
@@ -30,9 +44,10 @@ export default function UserForm(props: Profile) {
       foreword,
       email,
       twitter,
+      image: image.name,
     };
 
-    await axios.put("http://localhost:3000", data).then((res) => {
+    axios.put("http://localhost:3000", data).then((res) => {
       console.log("ok");
       console.log(res);
     });
@@ -95,12 +110,33 @@ export default function UserForm(props: Profile) {
               }
             />
           </Form.Group>
-
-          <button type="submit" onClick={handleClick}>
-            upData
-          </button>
+          <Form.Group>
+            <Form.Label>image:</Form.Label>
+            <Form.Label>{props.image}</Form.Label>
+            <div>
+              <img src={url} />
+            </div>
+            <Form.Label htmlFor="file-input"></Form.Label>
+            <Form.Control
+              type="file"
+              id="file-input"
+              accept="image/*"
+              onChange={uploadToClient}
+            />
+          </Form.Group>
+          <div>
+            <Button
+              variant="outline-secondary"
+              type="submit"
+              onClick={handleClick}
+            >
+              upData
+            </Button>
+          </div>
         </Form>
-        <Link href="/login">戻る</Link>
+        <Button variant="outline-secondary">
+          <Link href="/login">戻る</Link>
+        </Button>
       </div>
     </>
   );

@@ -2,13 +2,16 @@ import axios from "axios";
 import type { GetServerSideProps, NextPage } from "next";
 import React, { useState } from "react";
 import Link from "next/link";
+import { postImage } from "../component/up";
+import { Button } from "react-bootstrap";
+import { connectStorageEmulator } from "firebase/storage";
 
 export interface Work {
   id: number;
   title: string;
   content: string;
   profileId: number;
-  image: null;
+  image: string;
   favorite: number;
 }
 
@@ -29,19 +32,35 @@ export default function New(props: any) {
   // work
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [image, setImage] = useState(null);
+  const [url, setURL] = useState("");
+
   // skill
   const [name, setName] = useState("");
   const [levelId, setLevelId] = useState("");
-  //   クリック時
+
+  const uploadToClient = (e: any) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+
+      setImage(file.name);
+      setURL(URL.createObjectURL(file));
+    }
+  };
+
   const workhandleClick = async (e: any) => {
-    e.preventDefault();
+    const result = await postImage(image);
+    console.log(result);
+
     const work = {
       title,
       content,
       favorite: "0",
       profileId: "1",
+      image: image,
     };
-    await axios.post("http://localhost:3000/works", work).then((res) => {
+
+    axios.post("http://localhost:3000/works", work).then((res) => {
       alert("ok");
       console.log("送信");
       console.log(res);
@@ -49,8 +68,6 @@ export default function New(props: any) {
   };
 
   const skillhandleClick = async (e: any) => {
-    e.preventDefault();
-
     const skill = {
       name,
       levelId,
@@ -84,15 +101,29 @@ export default function New(props: any) {
             ></textarea>
           </div>
           <div>
+            <p> image </p>
+            <img src={url} />
+            <label htmlFor="file-input"></label>
+            <input
+              id="file-input"
+              type="file"
+              accept="image/*"
+              name="myImage"
+              onChange={uploadToClient}
+            />
+          </div>
+          <div>
             <p>
-              <button onClick={workhandleClick}>New</button>
+              <Button variant="outline-secondary" onClick={workhandleClick}>
+                New
+              </Button>
             </p>
           </div>
         </div>
       </form>
 
       <form>
-        <div>
+        <>
           <h3>skill</h3>
           <p>name</p>
           <input
@@ -121,22 +152,26 @@ export default function New(props: any) {
           </select>
           <div>
             <p>
-              <button onClick={skillhandleClick}>New</button>
+              <Button variant="outline-secondary" onClick={skillhandleClick}>
+                New
+              </Button>
             </p>
           </div>
-        </div>
+        </>
       </form>
-      <Link href="/login">戻る</Link>
+      <Button variant="outline-secondary">
+        <Link href="/login">戻る</Link>
+      </Button>
     </>
   );
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const res = await axios.get(`http://node:3000/level`);
-  const data = await res.data;
+  const data = res.data;
   return {
     props: {
-      data: data,
+      data,
     },
   };
 };
