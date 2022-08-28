@@ -23,7 +23,7 @@ router.post("/", async (req: Request, res: Response) => {
         content,
         favorite: Number(favorite),
         image,
-        profileId,
+        profileId: Number(profileId),
       },
     });
     res.status(201).json({ work });
@@ -47,7 +47,7 @@ router.get("/:id", async (req: Request, res: Response) => {
 
 router.put("/:id", async (req: Request, res: Response) => {
   const id = req.params.id;
-  const { title, content, favorite } = req.body;
+  const { title, content, favorite, image } = req.body;
   try {
     logger.info("w_put start");
     const upWork = await prisma.work.update({
@@ -58,6 +58,7 @@ router.put("/:id", async (req: Request, res: Response) => {
         title,
         content,
         favorite: Number(favorite),
+        image,
       },
     });
     res.status(200).json({ upWork });

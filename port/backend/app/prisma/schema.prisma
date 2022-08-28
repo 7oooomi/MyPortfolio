@@ -17,6 +17,7 @@ model Profile {
   foreword String  @db.VarChar(200)
   email    String
   twitter  String
+  image    String?
   works    Work[]
   Skill    Skill[]
 }

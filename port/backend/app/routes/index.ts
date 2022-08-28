@@ -34,7 +34,7 @@ router.post("/", async (req: Request, res: Response) => {
 });
 
 router.put("/", async (req: Request, res: Response) => {
-  const { name, career, foreword, email, twitter } = req.body;
+  const { name, career, foreword, email, twitter, image } = req.body;
   try {
     logger.info("pro_put start");
     const putProfile = await prisma.profile.update({
@@ -47,6 +47,7 @@ router.put("/", async (req: Request, res: Response) => {
         foreword,
         email,
         twitter,
+        image: image,
       },
     });
     res.status(200).json(putProfile);

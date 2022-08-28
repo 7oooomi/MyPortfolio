@@ -1,9 +1,11 @@
 import type { GetServerSideProps } from "next";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import type { ChangeEvent } from "react";
 import axios from "axios";
 import Link from "next/link";
-import { Form } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
+import { postImage } from "../component/up";
+import { useRouter } from "next/router";
 
 export interface works {
   works: Work[];
@@ -14,43 +16,57 @@ export interface Work {
   title: string;
   content: string;
   profileId: number;
-  image: null;
+  image: string;
   favorite: number;
 }
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const id = ctx.query.id;
+  const { id } = ctx.query;
   const res = await axios.get(`http://node:3000/works/${id}`);
-  const data = res.data;
+  const data = res.data.work[0];
   return {
     props: data,
   };
 };
 
-export default function WorkForm(props: any) {
-  const [title, setTitle] = useState(`${props.work[0].title}`);
-  const [content, setContent] = useState(`${props.work[0].content}`);
+export default function WorkForm(props: Work) {
+  const [title, setTitle] = useState(`${props.title}`);
+  const [content, setContent] = useState(`${props.content}`);
+  const [image, setImage] = useState(null);
+  const [url, setURL] = useState("");
 
-  const handleClick = async (e: any) => {
+  const uploadToClient = (e: any) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+
+      setImage(file.name);
+      setURL(URL.createObjectURL(file));
+    }
+  };
+
+  const handleClick = (e: any) => {
     e.preventDefault();
+    const result = postImage(image);
+    console.log(result);
 
     const data = {
       title,
       content,
       favorite: 0,
+      image: image,
     };
 
-    await axios
-      .put(`http://localhost:3000/works/${props.work[0].id}`, data)
-      .then((res) => {
-        console.log("ok");
-        console.log(res);
-      });
+    axios.put(`http://localhost:3000/works/${props.id}`, data).then((res) => {
+      console.log("ok");
+      console.log(res);
+    });
   };
 
   return (
     <>
       {console.log(props)}
+      {console.log(image)}
+
       <Form>
         <Form.Group>
           <Form.Label>アプリ名：</Form.Label>
@@ -62,7 +78,6 @@ export default function WorkForm(props: any) {
             }
           />
         </Form.Group>
-
         <Form.Group>
           <Form.Label>説明:</Form.Label>
           <Form.Control
@@ -74,11 +89,24 @@ export default function WorkForm(props: any) {
             }
           />
         </Form.Group>
-        <button type="submit" onClick={handleClick}>
-          upData
-        </button>
+        <Form.Group>
+          <Form.Label>image:</Form.Label>
+          <img src={url} />
+          <Form.Label htmlFor="file-input"></Form.Label>
+          <Form.Control
+            type="file"
+            id="file-input"
+            accept="image/*"
+            onChange={uploadToClient}
+          />
+        </Form.Group>
+        <Button variant="outline-secondary" type="submit" onClick={handleClick}>
+          <Link href="/login">upData</Link>
+        </Button>
       </Form>
-      <Link href="/login">戻る</Link>
+      <Button variant="outline-secondary">
+        <Link href="/login">キャンセル</Link>
+      </Button>
     </>
   );
 }

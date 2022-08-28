@@ -7,6 +7,7 @@ import type { GetServerSideProps } from "next";
 import styles from "../../styles/Home.module.css";
 import Button from "react-bootstrap/Button";
 import { useRef, createContext, useState, useContext } from "react";
+import Router, { useRouter } from "next/router";
 
 export interface profile {
   profile: Profile[];
@@ -40,7 +41,17 @@ export interface Work {
 }
 
 export default function Signin(props: profile) {
+  const router = useRouter();
   const [user] = useAuthState(auth);
+
+  const DelWork = (id: number, e: any) => {
+    console.log(id);
+    axios.delete(`http://localhost:3000/works/${id}`).then((res) => {
+      console.log(res);
+      console.log("削除");
+      return router.push("/login");
+    });
+  };
 
   return (
     <>
@@ -60,21 +71,28 @@ export default function Signin(props: profile) {
               works
               {props.profile[0].works.map((item, i) => {
                 return (
-                  <ul key={i}>
-                    <Link
-                      href={{
-                        pathname: "/login/myworkform",
-                        query: { id: item.id },
-                      }}
-                    >
-                      {item.title}
-                    </Link>
-                  </ul>
+                  <div key={i}>
+                    <ul>
+                      <Link
+                        href={{
+                          pathname: "/login/myworkform",
+                          query: { id: item.id },
+                        }}
+                      >
+                        {item.title}
+                      </Link>
+                    </ul>
+                    <ul>
+                      <Button
+                        variant="outline-secondary"
+                        onClick={(e) => DelWork(item.id, e)}
+                      >
+                        削除
+                      </Button>
+                    </ul>
+                  </div>
                 );
               })}
-              <ul>
-                <Link href="/login/upload">画像upload</Link>
-              </ul>
             </li>
             <li>
               skills
@@ -106,11 +124,10 @@ export default function Signin(props: profile) {
 }
 
 function SignInButton() {
+  const router = useRouter();
   const emailRef = useRef(null);
   const emailPassword = useRef(null);
-  const handleSubmit = (event: any) => {
-    event.preventDefault();
-    console.log(emailRef.current.value, emailPassword.current.value);
+  const handleSubmit = () => {
     signInWithEmailAndPassword(
       auth,
       emailRef.current.value,
@@ -121,6 +138,7 @@ function SignInButton() {
       })
       .catch((e) => {
         alert(e.message);
+        return router.push("/error");
       });
   };
 
@@ -151,9 +169,7 @@ function SignInButton() {
 function SignOutButton() {
   return (
     <Button variant="outline-secondary" onClick={() => auth.signOut()}>
-      <p>
-        <Link href="/">サインアウト</Link>
-      </p>
+      <Link href="/login">サインアウト</Link>
     </Button>
   );
 }

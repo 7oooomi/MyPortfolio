@@ -7,12 +7,22 @@ const prisma = new PrismaClient();
 export const router = Router();
 
 router.get("/", async (req: Request, res: Response) => {
-  const skills = await prisma.skill.findMany({
+  const skills = await prisma.skill.findMany();
+  res.status(200).json({ skills });
+  logger.info("skills_get ok");
+});
+
+router.get("/:id", async (req: Request, res: Response) => {
+  const id = req.params.id;
+  const skill = await prisma.skill.findMany({
+    where: {
+      id: Number(id),
+    },
     include: {
       level: true,
     },
   });
-  res.status(200).json({ skills });
+  res.status(200).json({ skill });
   logger.info("skill_get ok");
 });
 
